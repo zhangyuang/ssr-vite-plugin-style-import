@@ -47,7 +47,10 @@ export function createStyleImportPlugin(options: VitePluginOptions): Plugin {
     enforce: 'post',
     configResolved(resolvedConfig) {
       needSourcemap = !!resolvedConfig.build.sourcemap
-      external = resolvedConfig?.build?.rollupOptions?.external ?? undefined
+      // 兼容老 node 版本
+      if (resolvedConfig && resolvedConfig.build && resolvedConfig.build.rollupOptions && resolvedConfig.build.rollupOptions.external) {
+        external = resolvedConfig.build.rollupOptions.external 
+      }
     },
     async transform(code, id) {
       if (!code || !filter(id) || !needTransform(code, libs)) {
